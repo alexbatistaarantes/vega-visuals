@@ -1,5 +1,7 @@
 Scroller no estilo de bolsa de valores.
 
+![Scroller](image.png)
+
 Keywords: *scroller stock market ticker horizontal*
 
 OBS:

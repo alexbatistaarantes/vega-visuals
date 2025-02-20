@@ -1,0 +1,90 @@
+{
+  "background": "#000000",
+  "padding": {"top": 10},
+  "data": [
+    {
+      "name": "dataset",
+
+      "values": [
+        {
+          "departamento": "Lorem Ipsum",
+          "atingido": 80
+        },
+        {
+          "departamento": "Dolor sit amet",
+          "atingido": 66.6
+        },
+        {
+          "departamento": "Malesuada Turpis",
+          "atingido": 40
+        },
+        {
+          "departamento": "Nulla tincidunt",
+          "atingido": 90
+        }
+      ],
+
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "datum.departamento +' '+ if(datum.atingido > 70, '🡅 ', if(datum.atingido > 50, ' ╸ ', '🡇 ')) + format(datum.atingido, '.0f') + '%'",
+          "as": "text"
+        },
+        {
+          "type": "formula",
+          "expr": "if(datum.atingido > 70, 'green', if(datum.atingido > 50, 'orange', 'red'))",
+          "as": "color"
+        },
+        {"type": "formula", "expr": "10", "as": "largura"}
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "stepSpeed",
+      "init": "now()",
+      "on": [{"events": {"type": "timer", "throttle": 50}, "update": "now()"}]
+    },
+    {"name": "stepSize", "init": 15},
+    {"name": "tickerLength", "init": 1200},
+    {
+      "name": "xTicker",
+      "init": "width",
+      "on": [
+        {
+          "events": {"signal": "stepSpeed"},
+          "update": "if(xTicker+tickerLength > 0, xTicker - stepSize,  stepSize - xTicker)"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "xScale",
+      "type": "band",
+      "domain": {"data": "dataset", "field": "departamento"},
+      "nice": true,
+      "range": [{"signal": "xTicker"}, {"signal": "xTicker+tickerLength"}]
+    }
+  ],
+  "marks": [
+    {
+      "type": "text",
+      "from": {"data": "dataset"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xScale", "field": "departamento"},
+          "text": {"field": "text"}
+        },
+        "update": {
+          "x": {"scale": "xScale", "field": "departamento"},
+          "width": {"field": "largura"},
+          "text": {"field": "text"},
+          "fontSize": {"value": 30},
+          "fill": {"field": "color"}
+        }
+      }
+    }
+  ],
+  "config": {}
+}
